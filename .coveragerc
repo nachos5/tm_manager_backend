@@ -1,0 +1,5 @@
+[run]
+include = tm_manager_backend/*
+omit = *migrations*, *tests*
+plugins =
+    django_coverage_plugin
