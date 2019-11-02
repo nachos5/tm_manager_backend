@@ -10,6 +10,30 @@ Gæti verið að ég hafi gleymt einhverju, ef þið lendið í veseni látið m
 
 * framendi: https://tmmanagerfrontend.herokuapp.com
 
+# Easy setup
+
+* Install
+```
+git clone https://github.com/nachos5/tm_manager_backend.git
+cd tm_manager_backend
+chmod 744 install.sh start.sh
+./install.sh
+```
+
+* Start server
+```
+./start.sh
+```
+
+### ./install.sh
+* Setur upp alla pakka
+* Setur upp database
+* Setur upp .env
+
+### ./start.sh
+* Activate'ar `manage.py` fyrir enviromentið
+* Keyrir serverinn
+
 # Setup
 
 1. Þarf fyrst að setja upp PostgreSQL, eruð væntanlega með það, ég er með version 11.3, getið séð ykkar með 'SHOW server_version'
