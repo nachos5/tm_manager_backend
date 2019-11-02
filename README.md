@@ -1,6 +1,10 @@
 Gæti verið að ég hafi gleymt einhverju, ef þið lendið í veseni látið mig bara vita.
 
-Heroku síður (frí dynos svo gæti verið lengi að initialize-ast):
+*Frontend repo* - https://github.com/nachos5/tm_manager_frontend
+
+*Trello* - https://trello.com/b/qrljEtcc/tm-manager
+
+*Heroku síður* (frí dynos svo gæti verið lengi að initialize-ast):
 
 * bakendi: https://tmmanagerbackend.herokuapp.com/graphql
 
@@ -66,18 +70,18 @@ DATABASE_URL=postgres://username:password@localhost:5432/dbnafn
 
 * Graphql er 'query-api tungumál' sem er að mínu mati snilld. *Graphene* er framework library-ið fyrir það í Python. Fariði á **127.0.0.1:8000/graphql** og í textagluggann paste-iði þessu og ýtið svo á ctrl+enter:
 
-query {
-  tournaments {
-    edges {
-      node {
-        id
-        name
+  query {
+    tournaments {
+      edges {
+        node {
+          id
+          name
+        }
       }
     }
   }
-}
 
-Ættuð þá að fetcha öll tournaments úr databaseinu. Edges er listi af nodes þar sem hvert node er tournament í þessu tilviki. Þið getið svo bætt við eða fjarlægt fielda úr nóðunni. Til að sjá hvaða fieldar og query eru í boði tékkiði docs takkann efst í hægra horninu og ýtið svo á gula Query textann.
+  Ættuð þá að fetcha öll tournaments úr databaseinu. Edges er listi af nodes þar sem hvert node er tournament í þessu tilviki. Þið getið svo bætt við eða fjarlægt fielda úr nóðunni. Til að sjá hvaða fieldar og query eru í boði tékkiði docs takkann efst í hægra horninu og ýtið svo á gula Query textann.
 
 * Til að gera hluti aðgengilega í gegnum graphql api-inn þarf að skoða graphql appið/möppuna. Tékkiði fyrst api.py, þetta er root fællinn fyrir api-inn. Tékkið svo graphql/tournament/schema.py, þetta er þá rootið fyrir tournament aðferðirnar. Skiptist upp í **Queries** og **Mutations**. Getið hugsað Queries sem get requests og mutations sem post/patch requests (eða conceptlega séð, annars tæknilega séð eru öll graphql requests post). Svo eru þessir file-ar sem schemað er að referenca:
 
