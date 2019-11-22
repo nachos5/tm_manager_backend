@@ -3,6 +3,15 @@ from django_filters import FilterSet, NumberFilter
 from ...tournament import models
 
 
+class CategoryFilter(FilterSet):
+    class Meta:
+        model = models.Category
+        fields = {
+            "name": ["iexact", "icontains"],
+            "super_category__name": ["iexact", "icontains"],
+        }
+
+
 class TournamentFilter(FilterSet):
     super_category = NumberFilter(method="super_category_filter")
 
@@ -11,4 +20,8 @@ class TournamentFilter(FilterSet):
 
     class Meta:
         model = models.Tournament
-        fields = {"name": ["iexact", "icontains"]}
+        fields = {
+            "name": ["iexact", "icontains"],
+            "status": ["iexact", "in"],
+            "category__name": ["iexact", "in"],
+        }

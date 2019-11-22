@@ -22,11 +22,9 @@ class UsersQueries(graphene.ObjectType):
     def resolve_user_jwt(self, info, **kwargs):
         return info.context.user
 
-    @login_required
     def resolve_user(self, info, id, **kwargs):
         return resolve_user(info, id)
 
-    @login_required
     def resolve_users(self, info, **kwargs):
         return resolve_users(info)
 

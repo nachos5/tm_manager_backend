@@ -102,6 +102,7 @@ class Tournament(models.Model):
     def save(self, *args, **kwargs):
         """Save method for Tournament."""
         super().save(*args, **kwargs)
+        # búum til matchana fyrir mótið
         # ef við bætum við fleiri formöttum þyrfti að breyta hér
         if self.matches.count() == 0:
             init_single_elim(self)

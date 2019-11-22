@@ -2,7 +2,7 @@ import graphene
 import graphene_django_optimizer as gql_optimizer
 
 from . import types
-from ...tournament import models
+from ...tournament import models, TournamentStatus
 
 
 def resolve_super_category(info, id):
@@ -32,6 +32,10 @@ def resolve_tournaments(info):
         "registered_users", "matches"
     )
     return gql_optimizer.query(qs, info)
+
+
+def resolve_tournament_statuses(info):
+    return TournamentStatus.CHOICES
 
 
 def resolve_match(info, id):

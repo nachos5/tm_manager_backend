@@ -8,4 +8,5 @@ class User(CountableDjangoObjectType):
     class Meta:
         interfaces = [graphene.relay.Node]
         model = models.User
+        exclude = ("password", "isSuperuser", "isStaff", "isActive")
 

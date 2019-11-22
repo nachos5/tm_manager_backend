@@ -1,6 +1,7 @@
 from django import forms
 from random import shuffle
 
+from . import TournamentStatus
 from . import models
 from .utils.validators import validate_creator_or_admin
 from ..core.forms import ModelFormCreateOrUpdate
@@ -44,6 +45,10 @@ class TournamentToggleRegisteredUserForm(forms.ModelForm):
     @validate_instance
     def save(self, user):
         instance = super().save()
+        # tournamentið verður að vera opið
+        if not instance.status == TournamentStatus.OPEN:
+            raise forms.ValidationError("This tournament is not open for registration.")
+        # togglum
         if user in instance.registered_users.all():
             instance.registered_users.remove(user)
         else:

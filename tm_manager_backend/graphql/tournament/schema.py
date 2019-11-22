@@ -14,18 +14,44 @@ from ..core.fields import PrefetchingConnectionField
 
 class TournamentQueries(graphene.ObjectType):
     super_category = graphene.Field(
-        types.SuperCategory, id=graphene.Argument(graphene.ID)
+        types.SuperCategoryType,
+        id=graphene.Argument(graphene.ID),
+        description="Returns a single Super Category by ID.",
     )
-    super_categories = PrefetchingConnectionField(types.SuperCategory)
+    super_categories = PrefetchingConnectionField(
+        types.SuperCategoryType, description="Returns a list of Super Category nodes."
+    )
 
-    category = graphene.Field(types.Category, id=graphene.Argument(graphene.ID))
-    categories = PrefetchingConnectionField(types.Category)
+    category = graphene.Field(
+        types.CategoryType,
+        id=graphene.Argument(graphene.ID),
+        description="Returns a single Category node by ID.",
+    )
+    categories = DjangoFilterConnectionField(
+        types.CategoryType, description="Returns a list of Category nodes."
+    )
 
-    tournament = graphene.Field(types.Tournament, id=graphene.Argument(graphene.ID))
-    tournaments = DjangoFilterConnectionField(types.Tournament)
+    tournament = graphene.Field(
+        types.TournamentType,
+        id=graphene.Argument(graphene.ID),
+        description="Returns a single Tournament node.",
+    )
+    tournaments = DjangoFilterConnectionField(
+        types.TournamentType, description="Returns a list of Tournament nodes."
+    )
+    tournament_statuses = graphene.List(
+        graphene.List(graphene.String),
+        description="Returns all available Tournament statuses in a list, where each element is a tuple on the format [status, status display text]",
+    )
 
-    match = graphene.Field(types.Match, id=graphene.Argument(graphene.ID))
-    matches = PrefetchingConnectionField(types.Match)
+    match = graphene.Field(
+        types.MatchType,
+        id=graphene.Argument(graphene.ID),
+        description="Returns a single Match by ID.",
+    )
+    matches = PrefetchingConnectionField(
+        types.MatchType, description="Returns a list of Match nodes."
+    )
 
     def resolve_super_category(self, info, id, **kwargs):
         return resolvers.resolve_super_category(info, id)
@@ -44,6 +70,9 @@ class TournamentQueries(graphene.ObjectType):
 
     def resolve_tournaments(self, info, **kwargs):
         return resolvers.resolve_tournaments(info)
+
+    def resolve_tournament_statuses(self, info, **kwargs):
+        return resolvers.resolve_tournament_statuses(info)
 
     def resolve_match(self, info, id, **kwargs):
         return resolvers.resolve_match(info, id)

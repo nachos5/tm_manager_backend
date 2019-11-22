@@ -1,23 +1,24 @@
 import graphene
 
-from .filters import TournamentFilter
+from .filters import CategoryFilter, TournamentFilter
 from ..core.types import CountableDjangoObjectType
 from ...tournament import models
 
 
-class SuperCategory(CountableDjangoObjectType):
+class SuperCategoryType(CountableDjangoObjectType):
     class Meta:
         interfaces = [graphene.relay.Node]
         model = models.SuperCategory
 
 
-class Category(CountableDjangoObjectType):
+class CategoryType(CountableDjangoObjectType):
     class Meta:
         interfaces = [graphene.relay.Node]
         model = models.Category
+        filterset_class = CategoryFilter
 
 
-class Tournament(CountableDjangoObjectType):
+class TournamentType(CountableDjangoObjectType):
     status_display = graphene.String()
 
     class Meta:
@@ -29,7 +30,7 @@ class Tournament(CountableDjangoObjectType):
         return self.get_status_display()
 
 
-class Match(CountableDjangoObjectType):
+class MatchType(CountableDjangoObjectType):
     class Meta:
         interfaces = [graphene.relay.Node]
         model = models.Match
