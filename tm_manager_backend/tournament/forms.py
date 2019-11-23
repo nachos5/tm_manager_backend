@@ -1,5 +1,7 @@
-from django import forms
 from random import shuffle
+
+from django import forms
+from django.db.models import F, Max, Subquery
 
 from . import TournamentStatus
 from . import models
@@ -67,8 +69,8 @@ class TournamentCreateInitialMatchups(forms.ModelForm):
     def save(self, user):
         instance = super().save()
         # sækjum round 1 matchana
-        first_round_matches = models.Match.objects.filter(
-            tournament=instance, level=instance.n_rounds
+        first_round_matches = models.Match.objects.first_round_matches(
+            tournament_id=instance.id
         )
 
         # shufflum userunum

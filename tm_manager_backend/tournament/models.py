@@ -116,6 +116,17 @@ class Tournament(models.Model):
         return n_rounds
 
 
+class MatchQuerySet(models.QuerySet):
+    def first_round_matches(self, tournament_id):
+        return self.filter(
+            tournament_id=tournament_id,
+            # filterum eftir max lvl-inu fyrir þetta tournament
+            level=self.filter(tournament_id=tournament_id).aggregate(
+                models.Max("level")
+            )["level__max"],
+        )
+
+
 class Match(MPTTModel):
     """Model definition for Match."""
 
@@ -134,6 +145,8 @@ class Match(MPTTModel):
         blank=True,
         null=True,
     )
+
+    custom_objects = MatchQuerySet.as_manager()
 
     class Meta:
         """Meta definition for Match."""
