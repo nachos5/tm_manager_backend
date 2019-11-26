@@ -1,5 +1,6 @@
 import random
 
+from datetime import datetime, time, timedelta
 from faker import Faker
 
 from ..tournament import models as TModels
@@ -32,16 +33,28 @@ def generate_initial_data():
 
     # mót
     users = list(User.objects.all())
-    slots = [8, 16, 32, 64, 128, 256]
+    # superuser = User.objects.get(is_superuser=True)
+    slots = [8, 16, 32, 64, 128]
+    dates = [datetime.now(), datetime.now() + timedelta(weeks=1)]
+    times = [time(hour=17, minute=0), time(hour=19, minute=30), time(hour=20, minute=0)]
+    locations = ["Nörd", "Hallgrímskirkja"]
     for f in flokkar:
         # 10 mót fyrir hvern flokk
         for i in range(10):
-            TModels.Tournament.objects.create(
-                creator=random.choice(users),
-                name=" ".join(fake.words()),
+            creator = random.choice(users)
+            slots_curr = random.choice(slots)
+            t = TModels.Tournament.objects.create(
+                creator=creator,
+                name=" ".join(fake.words()) + " tournament",
                 category=f,
-                slots=random.choice(slots),
+                slots=slots_curr,
+                date=random.choice(dates),
+                time=random.choice(times),
+                location=random.choice(locations),
             )
+            users_max = slots_curr if len(users) >= slots_curr else len(users)
+            random_users = random.sample(users, random.randint(0, users_max))
+            t.registered_users.set(random_users)
 
     print("Generating initial data done")
 

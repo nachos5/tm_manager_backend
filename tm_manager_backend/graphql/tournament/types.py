@@ -24,6 +24,8 @@ class CategoryType(CountableDjangoObjectType):
 class TournamentType(CountableDjangoObjectType):
     status_display = graphene.String()
     match_bracket = graphene.String()
+    user_is_registered = graphene.Boolean()
+    can_edit = graphene.Boolean()
 
     class Meta:
         interfaces = [graphene.relay.Node]
@@ -35,11 +37,24 @@ class TournamentType(CountableDjangoObjectType):
 
     def resolve_match_bracket(self, info):
         """ setur bracketinn á form eins og react-tournament-bracket biður um """
-        matches = self.matches.all().order_by("level")
+        matches = self.matches.all()
+        matches = list(reversed(matches))
         # rótin er winnerinn
-        root = matches.first()
-        d = match_bracket(root)
+        root = matches[-1]
+        d = match_bracket(root, matches)
         return json.dumps(d)
+
+    def resolve_user_is_registered(self, info):
+        user = info.context.user
+        if user.is_authenticated and user in self.registered_users.all():
+            return True
+        return False
+
+    def resolve_can_edit(self, info):
+        user = info.context.user
+        return user.is_authenticated and (
+            user.is_superuser or user == self.creator or user in self.admins.all()
+        )
 
 
 class MatchType(CountableDjangoObjectType):

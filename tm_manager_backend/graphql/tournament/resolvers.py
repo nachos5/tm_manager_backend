@@ -44,5 +44,6 @@ def resolve_match(info, id):
 
 def resolve_matches(info):
     qs = models.Match.objects.all().prefetch_related("users")
+    print(qs)
     return gql_optimizer.query(qs, info)
 

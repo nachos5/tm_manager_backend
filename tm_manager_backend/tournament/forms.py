@@ -17,7 +17,7 @@ from ..core.utils.validators import (
 class TournamentCreateForm(ModelFormCreateOrUpdate):
     class Meta:
         model = models.Tournament
-        fields = ["category", "name", "slots"]
+        fields = ["category", "name", "slots", "date", "time"]
 
     def save(self, user):
         self.instance.creator = user
@@ -67,9 +67,10 @@ class TournamentCreateInitialMatchups(forms.ModelForm):
     @validate_instance
     @validate_creator_or_admin
     def save(self, user):
+        self.instance.status = TournamentStatus.ONGOING
         instance = super().save()
         # sækjum round 1 matchana
-        first_round_matches = models.Match.objects.first_round_matches(
+        first_round_matches = models.Match.custom_objects.first_round_matches(
             tournament_id=instance.id
         )
 
@@ -77,6 +78,7 @@ class TournamentCreateInitialMatchups(forms.ModelForm):
         users_shuffled = list(instance.registered_users.all())
         shuffle(users_shuffled)
         # assignum userunum í matchana
+        updated_matches = []
         for i, match in enumerate(first_round_matches):
             # sækjum usera til að setja í þennan match
             user_1 = None
@@ -87,11 +89,17 @@ class TournamentCreateInitialMatchups(forms.ModelForm):
                 user_2 = users_shuffled[i * 2 + 1]
             # assignum userunum
             if user_1 and user_2:
-                match.users.set([user_1, user_2])
+                match.user_home = user_1
+                match.user_visitor = user_2
+                updated_matches.append(match)
             elif user_1:
-                match.users.set([user_1])
+                match.user_home = user_1
+                updated_matches.append(match)
                 break
             else:
                 break
+
+        # bulk update-um matchana
+        models.Match.objects.bulk_update(updated_matches, ["user_home", "user_visitor"])
 
         return instance

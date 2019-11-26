@@ -3,6 +3,7 @@ Base settings to build other settings files upon.
 """
 
 import environ
+import pytz
 
 ROOT_DIR = (
     environ.Path(__file__) - 3
@@ -25,7 +26,8 @@ DEBUG = env.bool("DJANGO_DEBUG", False)
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # though not all of them may be available with every OS.
 # In Windows, this must be set to your system time zone.
-TIME_ZONE = "UTC"
+TIME_ZONE = "Atlantic/Reykjavik"
+PYTZ_TIME_ZONE = pytz.timezone(TIME_ZONE)
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 LANGUAGE_CODE = "en-us"
 # https://docs.djangoproject.com/en/dev/ref/settings/#site-id
@@ -38,6 +40,8 @@ USE_L10N = True
 USE_TZ = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
 LOCALE_PATHS = [ROOT_DIR.path("locale")]
+
+ENABLE_SILK = env.bool("ENABLE_SILK", False)
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -85,6 +89,8 @@ LOCAL_APPS = [
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+if ENABLE_SILK:
+    INSTALLED_APPS += ["silk"]
 
 # MIGRATIONS
 # ------------------------------------------------------------------------------
@@ -140,6 +146,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+if ENABLE_SILK:
+    MIDDLEWARE.insert(2, "silk.middleware.SilkyMiddleware")
 
 # CORS
 # ------------------------------------------------------------------------------

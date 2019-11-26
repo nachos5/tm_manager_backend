@@ -1,10 +1,10 @@
 import time
 
 
-def match_bracket(match):
+def match_bracket(match, matches):
     """ setur bracketinn á form eins og react-tournament-bracket biður um """
     # tékkum hvort það séu userar fyrir þennan match
-    users = match.users.all()
+    users = match.users
     # fyrsti userinn
     if len(users) > 0:
         home_user = users[0]
@@ -19,11 +19,11 @@ def match_bracket(match):
         visitor_user_dict = dict()
 
     # tékkum hvort matchinn hafi "börn" ("seeding matches")
-    children = match.children.all()
+    children = [x for x in matches if x.parent_id == match.id]
     if children:
         # sækjum leiki recursive
-        home_game = match_bracket(children[0])
-        visitor_game = match_bracket(children[1])
+        home_game = match_bracket(children[0], matches)
+        visitor_game = match_bracket(children[1], matches)
 
         home = dict(
             {
@@ -34,6 +34,7 @@ def match_bracket(match):
                     "sourceGame": home_game,
                 },
                 "team": home_user_dict,
+                "score": {"score": match.user_home_points},
             }
         )
 
@@ -46,17 +47,24 @@ def match_bracket(match):
                     "sourceGame": visitor_game,
                 },
                 "team": visitor_user_dict,
+                "score": {"score": match.user_visitor_points},
             }
         )
     else:
-        home = dict({"team": home_user_dict})
-        visitor = dict({"team": visitor_user_dict})
+        home = dict(
+            {"team": home_user_dict, "score": {"score": match.user_home_points}}
+        )
+        visitor = dict(
+            {"team": visitor_user_dict, "score": {"score": match.user_visitor_points}}
+        )
 
     d = dict(
         {
             "id": match.id,
             "name": "",
-            "scheduled": int(round(time.time() * 1000)),
+            "scheduled": int(
+                round(time.mktime(match.tournament.date.timetuple()) * 1000)
+            ),
             "sides": {"home": home, "visitor": visitor},
         }
     )
