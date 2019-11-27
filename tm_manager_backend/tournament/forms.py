@@ -17,7 +17,7 @@ from ..core.utils.validators import (
 class TournamentCreateForm(ModelFormCreateOrUpdate):
     class Meta:
         model = models.Tournament
-        fields = ["category", "name", "slots", "date", "time"]
+        fields = ["category", "name", "slots", "date", "time", "location", "private"]
 
     def save(self, user):
         self.instance.creator = user
