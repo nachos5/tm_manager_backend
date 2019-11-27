@@ -24,6 +24,12 @@ fi
 echo "Activating access to functions"
 source $python_venv_activate
 
+# Check if last command was successfull
+if [[ $? -ne 0 ]]; then
+  echo "File $python_venv_activate not found"
+  exit 1
+fi
+
 # Install python packages
 echo "Installing python packages"
 pip install -r "requirements/local.txt"
@@ -47,6 +53,13 @@ if [ ! -f $env ]; then
   # Fill the database with relations
   echo "Filling the database $database with relations"
   python manage.py migrate
+
+  # Fill the database with random data
+  echo "Filling the relations in database $database with random data"
+  python manage.py shell_plus << EOF
+  generate_initial_data()
+EOF
+
 fi
 
 echo "Installation done"

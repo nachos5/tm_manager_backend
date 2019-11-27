@@ -1,16 +1,22 @@
-Gæti verið að ég hafi gleymt einhverju, ef þið lendið í veseni látið mig bara vita.
+# Info
 
-*Frontend repo* - https://github.com/nachos5/tm_manager_frontend
+* **Frontend repo**
+  * https://github.com/nachos5/tm_manager_frontend
+* **Trello**
+  * https://trello.com/b/qrljEtcc/tm-manager
+* **Heroku síður** (frí dynos svo gæti verið lengi að initialize-ast):
+  * bakendi:
+    * https://tmmanagerbackend.herokuapp.com/graphql
+  * framendi:
+    * https://tmmanagerfrontend.herokuapp.com
 
-*Trello* - https://trello.com/b/qrljEtcc/tm-manager
+# Requirements
+* **Python**
+  * https://www.python.org/downloads/
+* **PostgreSQL**
+  * https://www.postgresql.org/download/
 
-*Heroku síður* (frí dynos svo gæti verið lengi að initialize-ast):
-
-* bakendi: https://tmmanagerbackend.herokuapp.com/graphql
-
-* framendi: https://tmmanagerfrontend.herokuapp.com
-
-# Easy setup
+# Easy setup (only works on unix)
 
 * Install
 ```
@@ -29,6 +35,7 @@ chmod 744 install.sh start.sh
 * Setur upp alla pakka
 * Setur upp database
 * Setur upp .env
+* Setur random gögn i database
 
 ### ./start.sh
 * Activate'ar `manage.py` fyrir enviromentið
@@ -36,24 +43,61 @@ chmod 744 install.sh start.sh
 
 # Setup
 
-1. Þarf fyrst að setja upp PostgreSQL, eruð væntanlega með það, ég er með version 11.3, getið séð ykkar með 'SHOW server_version'
-en held að það ætti ekki að skipta máli ef þið eruð með annað version. Búið svo til nýtt database, skiptir ekki máli hvað það heitir, mitt heitir tm.
+## Install
 
-2. Mæli 100% með því að setja upp python environment fyrir projectið, ég geymi mitt í rootinu á projectinu, þurfið þá að cd-a í rootið og runa **python3 -m venv venv**, fáið þá möppu sem heitir *venv* í rootinu. Til að activate-a environmentið runiði:
+1. Download repo
+```
+git clone https://github.com/nachos5/tm_manager_backend.git
+cd tm_manager_backend
+```
+2. Set up python environment for the project
+```
+python3 -m venv venv
+```
+3. Activate the environment
 
-* source venv/bin/activate fyrir unix/macOS.
-* venv\Scripts\activate.bat fyrir command prompt.
-* venv\Scripts\activate.ps1 fyrir powershell.
+* Unix/MacOs
+```
+source venv/bin/activate
+```
+* Command prompt
+```
+venv\Scripts\activate.bat
+```
+* Powershell
+```
+venv\Scripts\activate.ps1
+```
+4. Install the python packages
+```
+pip install -r requirements/local.txt
+```
+6. Make a **.env** file in the root of the project and put your database url, username and password.
+```
+echo "DATABASE_URL=postgres://<MY_USERNAME>:<MY_PASSWORD>@localhost:5432/<MY_DATABASE>" > .env
+```
+8. Manually create a database in postgreSQL
+```
+createdb -O <MY_USERNAME> <MY_DATABASE>
+```
+9.  Populate the database with relations
+```
+python manage.py migrate
+```
+10. Extra, to create a superuser
+```
+python manage.py createsuperuser
+```
 
-3. Installa python pökkunum, runiði **pip install -r requirements/local.txt**.
+## Start server
 
-4. Búið til **.env** file í rootinu og setjið database urlinn ykkar þangað, semsagt:
-DATABASE_URL=postgres://username:password@localhost:5432/dbnafn
+1. Activate the environment using **step 3.** from the install above/
+2. Run the server
+```
+python manage.py runserver
+```
 
-5. Runnið **python manage.py migrate** og svo **python manage.py runserver**. Ætti að virka og ættuð að geta séð dót á *127.0.0.1:8000*.
-
-6. Mæli með að búa til superuser með **python manage.py createsuperuser**
-
+The server launches at **127.0.0.1:8000**
 
 # Django projects
 
