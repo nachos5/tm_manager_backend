@@ -35,7 +35,7 @@ class MatchAdmin(admin.ModelAdmin):
     """Admin View for Match"""
 
     def get_users(self, obj):
-        return ", ".join(obj.users.all().values_list("username", flat=True))
+        return [x.username for x in obj.users]
 
     list_display = ("tournament", "level", "get_users")
     search_fields = ("tournament",)

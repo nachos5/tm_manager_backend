@@ -33,3 +33,10 @@ class TournamentCreateInitialMatchupsMutation(DjangoModelFormMutationUser):
 
     class Meta:
         form_class = forms.TournamentCreateInitialMatchups
+
+
+class MatchCompleteMutation(DjangoModelFormMutationUser):
+    match = graphene.Field(types.MatchType)
+
+    class Meta:
+        form_class = forms.MatchCompleteForm

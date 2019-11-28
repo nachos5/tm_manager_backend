@@ -39,9 +39,10 @@ class TournamentType(CountableDjangoObjectType):
         """ setur bracketinn á form eins og react-tournament-bracket biður um """
         matches = self.matches.all()
         matches = list(reversed(matches))
+        users = self.registered_users.all()
         # rótin er winnerinn
         root = matches[-1]
-        d = match_bracket(root, matches)
+        d = match_bracket(root, matches, users)
         return json.dumps(d)
 
     def resolve_user_is_registered(self, info):

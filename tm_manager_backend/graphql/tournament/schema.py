@@ -7,6 +7,7 @@ from .mutations import (
     TournamentUpdateMutation,
     TournamentToggleRegisteredUserMutation,
     TournamentCreateInitialMatchupsMutation,
+    MatchCompleteMutation,
 )
 from . import resolvers
 from ..core.fields import PrefetchingConnectionField
@@ -86,4 +87,6 @@ class TournamentMutations(graphene.ObjectType):
     tournament_update = TournamentUpdateMutation.Field()
     tournament_toggle_registered_user = TournamentToggleRegisteredUserMutation.Field()
     tournament_create_initial_matchups = TournamentCreateInitialMatchupsMutation.Field()
+
+    match_complete = MatchCompleteMutation.Field()
 

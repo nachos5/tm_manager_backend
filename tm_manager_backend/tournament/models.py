@@ -135,6 +135,10 @@ class Tournament(models.Model):
         n_rounds = int(math.log(n_matches, 2))
         return n_rounds
 
+    @property
+    def winner(self):
+        return self.matches.first().get_root().winner
+
 
 class MatchQuerySet(models.QuerySet):
     def first_round_matches(self, tournament_id):
@@ -198,11 +202,43 @@ class Match(MPTTModel):
     def save(self, *args, **kwargs):
         """Save method for Match."""
         super().save(*args, **kwargs)
+        # ef engin parent nóða er þetta rootið og við stillum tournament winner
+        if self.users and not self.parent and self.winner:
+            self.tournament.status = TournamentStatus.FINISHED
+            self.tournament.save()
 
     @property
     def users(self):
+        users = []
         if self.user_home:
-            if self.user_visitor:
-                return [self.user_home, self.user_visitor]
-            return [self.user_home]
-        return []
+            users += [self.user_home]
+        if self.user_visitor:
+            users += [self.user_visitor]
+        return users
+
+    @property
+    def users_both_sides(self):
+        """ Tékkar hvort matchinn sé með usera báðu megin einhversstaðar í trénu.
+            Semsagt tékkar hvort að þessi match muni vera með frítt win eða ekki """
+        children = list(self.children.all())
+        if not children:
+            return False
+        return (
+            len(
+                [
+                    x
+                    for x in children[0].get_descendants(include_self=True)
+                    if x.user_home
+                ]
+            )
+            > 0
+            and len(
+                [
+                    x
+                    for x in children[1].get_descendants(include_self=True)
+                    if x.user_home
+                ]
+            )
+            > 0
+        )
+

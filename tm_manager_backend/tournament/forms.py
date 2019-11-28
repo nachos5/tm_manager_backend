@@ -5,7 +5,8 @@ from django.db.models import F, Max, Subquery
 
 from . import TournamentStatus
 from . import models
-from .utils.validators import validate_creator_or_admin
+from .utils.tree import parent_seeding, free_match_win
+from .utils.validators import validate_creator_or_admin, validate_creator_or_admin_match
 from ..core.forms import ModelFormCreateOrUpdate
 from ..core.utils.validators import (
     prepare_for_update,
@@ -79,6 +80,7 @@ class TournamentCreateInitialMatchups(forms.ModelForm):
         shuffle(users_shuffled)
         # assignum userunum í matchana
         updated_matches = []
+        free_match = None
         for i, match in enumerate(first_round_matches):
             # sækjum usera til að setja í þennan match
             user_1 = None
@@ -95,11 +97,40 @@ class TournamentCreateInitialMatchups(forms.ModelForm):
             elif user_1:
                 match.user_home = user_1
                 updated_matches.append(match)
+                free_match = match
                 break
             else:
                 break
 
         # bulk update-um matchana
         models.Match.objects.bulk_update(updated_matches, ["user_home", "user_visitor"])
+        if free_match:
+            free_match_win(free_match)
 
         return instance
+
+
+class MatchCompleteForm(forms.ModelForm):
+    class Meta:
+        model = models.Match
+        fields = ["user_home_points", "user_visitor_points"]
+
+    @validate_instance
+    @validate_creator_or_admin_match
+    def save(self, user):
+        if not (self.instance.user_home and self.instance.user_visitor):
+            raise forms.ValidationError("There are not two users in this match!")
+        # stillum winner
+        if self.instance.user_home_points > self.instance.user_visitor_points:
+            self.instance.winner = self.instance.user_home
+        elif self.instance.user_home_points < self.instance.user_visitor_points:
+            self.instance.winner = self.instance.user_visitor
+        else:
+            raise forms.ValidationError(
+                "The winner can't be determined when there is a draw!"
+            )
+        instance = super().save()
+
+        parent_seeding(match=instance)
+        if not instance.parent.users_both_sides:
+            free_match_win(instance.parent)

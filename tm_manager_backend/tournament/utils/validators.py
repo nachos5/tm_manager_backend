@@ -39,3 +39,18 @@ def validate_creator_or_admin(save):
         return save(self, user)
 
     return func
+
+
+def validate_creator_or_admin_match(save):
+    @wraps(save)
+    def func(self, user):
+        # aðeins sá sem bjó til tournamentið eða admins geta editað (eða superuser)
+        if (
+            not user == self.instance.tournament.creator
+            and not user in self.instance.tournament.admins.all()
+            and not user.is_superuser
+        ):
+            raise forms.ValidationError("You can't modify this tournament")
+        return save(self, user)
+
+    return func
