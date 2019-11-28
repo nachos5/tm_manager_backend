@@ -4,10 +4,10 @@
   * https://github.com/nachos5/tm_manager_frontend
 * **Trello**
   * https://trello.com/b/qrljEtcc/tm-manager
-* **Heroku síður** (frí dynos svo gæti verið lengi að initialize-ast):
-  * bakendi:
-    * https://tmmanagerbackend.herokuapp.com/graphql
-  * framendi:
+* **Heroku síður** (Using free dynos so be patient):
+  * Backend:
+    * https://tmmanagerbackend.herokuapp.com
+  * Frontend:
     * https://tmmanagerfrontend.herokuapp.com
 
 # Requirements
@@ -32,14 +32,15 @@ chmod 744 install.sh start.sh
 ```
 
 ### ./install.sh
-* Setur upp alla pakka
-* Setur upp database
-* Setur upp .env
-* Setur random gögn i database
+* Installs all the packages
+* Sets up the database
+* Sets up the .env file
+* Sets up relations in the database
+* Puts random data into the database
 
 ### ./start.sh
-* Activate'ar `manage.py` fyrir enviromentið
-* Keyrir serverinn
+* Activates `manage.py` for the enviroment
+* Runs the server
 
 # Setup
 
@@ -91,7 +92,7 @@ python manage.py createsuperuser
 
 ## Start server
 
-1. Activate the environment using **step 3.** from the install above/
+1. Activate the environment using **step 3.** from the install above
 2. Run the server
 ```
 python manage.py runserver
