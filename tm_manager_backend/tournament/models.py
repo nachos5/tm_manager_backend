@@ -2,6 +2,7 @@ import datetime
 import math
 import random
 import string
+import uuid
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -60,10 +61,12 @@ class Category(models.Model):
         super().save(*args, **kwargs)
 
 
-# class TournamentQuerySet(models.QuerySet):
-#     def filter(self, *args, **kwargs):
-#         qs = super().filter(*args, **kwargs)
-#         return qs
+class TournamentQuerySet(models.QuerySet):
+    # hver user fær að sjá sín eigin private tourn.
+    def public(self, user=None):
+        if user and not user.is_authenticated:
+            user = None
+        return self.filter(models.Q(private=False) | models.Q(creator=user))
 
 
 class Tournament(models.Model):
@@ -101,12 +104,20 @@ class Tournament(models.Model):
     location = models.CharField(max_length=100)
     date = models.DateField(validators=[validate_date])
     time = models.TimeField()
+    winner = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="won_tournaments",
+        blank=True,
+        null=True,
+    )
 
-    # objects = TournamentQuerySet.as_manager()
+    objects = TournamentQuerySet.as_manager()
 
     class Meta:
         """Meta definition for Tournament."""
 
+        get_latest_by = "id"
         ordering = ["-created", "-pk"]
         verbose_name = "Tournament"
         verbose_name_plural = "Tournaments"
@@ -117,11 +128,16 @@ class Tournament(models.Model):
 
     def save(self, *args, **kwargs):
         """Save method for Tournament."""
-        # random 8 stafa strengur
-        self.code = "".join(
-            random.choice(string.ascii_uppercase + string.digits) for _ in range(8)
-        )
+        # búum til code þegar tournamentið er búið til
+        if not self.id:
+            while True:
+                code = "".join(random.choice(string.ascii_uppercase) for _ in range(6))
+                if not Tournament.objects.filter(code=code).exists():
+                    break
+            self.code = code
+
         super().save(*args, **kwargs)
+
         # búum til matchana fyrir mótið
         # ef við bætum við fleiri formöttum þyrfti að breyta hér
         if self.matches.count() == 0:
@@ -134,10 +150,6 @@ class Tournament(models.Model):
         # fjöldi umferða er base 2 logrinn af fjölda leikja round 1
         n_rounds = int(math.log(n_matches, 2))
         return n_rounds
-
-    @property
-    def winner(self):
-        return self.matches.first().get_root().winner
 
 
 class MatchQuerySet(models.QuerySet):
@@ -186,12 +198,12 @@ class Match(MPTTModel):
         null=True,
     )
 
-    custom_objects = MatchQuerySet.as_manager()
+    objects = MatchQuerySet.as_manager()
 
     class Meta:
         """Meta definition for Match."""
 
-        ordering = ["tournament__pk", "level"]
+        ordering = ["tournament__pk", "-level", "id"]
         verbose_name = "Match"
         verbose_name_plural = "Matches"
 
@@ -205,6 +217,7 @@ class Match(MPTTModel):
         # ef engin parent nóða er þetta rootið og við stillum tournament winner
         if self.users and not self.parent and self.winner:
             self.tournament.status = TournamentStatus.FINISHED
+            self.tournament.winner = self.winner
             self.tournament.save()
 
     @property

@@ -5,6 +5,7 @@ import graphene
 from .filters import CategoryFilter, TournamentFilter
 from .utils import match_bracket
 from ..core.types import CountableDjangoObjectType
+from ..users.types import User
 from ...tournament import models
 
 
@@ -26,6 +27,7 @@ class TournamentType(CountableDjangoObjectType):
     match_bracket = graphene.String()
     user_is_registered = graphene.Boolean()
     can_edit = graphene.Boolean()
+    winner = graphene.Field(User)
 
     class Meta:
         interfaces = [graphene.relay.Node]
@@ -38,12 +40,14 @@ class TournamentType(CountableDjangoObjectType):
     def resolve_match_bracket(self, info):
         """ setur bracketinn á form eins og react-tournament-bracket biður um """
         matches = self.matches.all()
-        matches = list(reversed(matches))
+        matches = list(matches)
         users = self.registered_users.all()
         # rótin er winnerinn
         root = matches[-1]
         d = match_bracket(root, matches, users)
-        return json.dumps(d)
+        j = json.dumps(d, indent=2)
+        # print(j)
+        return j
 
     def resolve_user_is_registered(self, info):
         user = info.context.user
@@ -56,6 +60,21 @@ class TournamentType(CountableDjangoObjectType):
         return user.is_authenticated and (
             user.is_superuser or user == self.creator or user in self.admins.all()
         )
+
+    def resolve_winner(self, info):
+        return self.winner
+
+    def resolve_code(self, info):
+        user = info.context.user
+        # ef private tourn. geta ekki allir séð
+        if (
+            self.private
+            and not user == self.creator
+            and not user in self.admins.all()
+            and not user.is_superuser
+        ):
+            return "private"
+        return self.code
 
 
 class MatchType(CountableDjangoObjectType):

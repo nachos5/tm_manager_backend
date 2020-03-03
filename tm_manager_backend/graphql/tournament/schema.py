@@ -35,6 +35,7 @@ class TournamentQueries(graphene.ObjectType):
     tournament = graphene.Field(
         types.TournamentType,
         id=graphene.Argument(graphene.ID),
+        code=graphene.Argument(graphene.String),
         description="Returns a single Tournament node.",
     )
     tournaments = DjangoFilterConnectionField(
@@ -66,8 +67,8 @@ class TournamentQueries(graphene.ObjectType):
     def resolve_categories(self, info, **kwargs):
         return resolvers.resolve_categories(info)
 
-    def resolve_tournament(self, info, id, **kwargs):
-        return resolvers.resolve_tournament(info, id)
+    def resolve_tournament(self, info, id=None, code=None, **kwargs):
+        return resolvers.resolve_tournament(info, id, code)
 
     def resolve_tournaments(self, info, **kwargs):
         return resolvers.resolve_tournaments(info)

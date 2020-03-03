@@ -1,7 +1,6 @@
 from random import shuffle
 
 from django import forms
-from django.db.models import F, Max, Subquery
 
 from . import TournamentStatus
 from . import models
@@ -71,7 +70,7 @@ class TournamentCreateInitialMatchups(forms.ModelForm):
         self.instance.status = TournamentStatus.ONGOING
         instance = super().save()
         # sækjum round 1 matchana
-        first_round_matches = models.Match.custom_objects.first_round_matches(
+        first_round_matches = models.Match.objects.first_round_matches(
             tournament_id=instance.id
         )
 
@@ -80,6 +79,7 @@ class TournamentCreateInitialMatchups(forms.ModelForm):
         shuffle(users_shuffled)
         # assignum userunum í matchana
         updated_matches = []
+        # verður frítt win fyrir einhvern ef no. players er oddatala
         free_match = None
         for i, match in enumerate(first_round_matches):
             # sækjum usera til að setja í þennan match
@@ -118,13 +118,17 @@ class MatchCompleteForm(forms.ModelForm):
     @validate_instance
     @validate_creator_or_admin_match
     def save(self, user):
-        if not (self.instance.user_home and self.instance.user_visitor):
+        user_home = self.instance.user_home
+        user_visitor = self.instance.user_visitor
+        if not (user_home and user_visitor):
             raise forms.ValidationError("There are not two users in this match!")
         # stillum winner
-        if self.instance.user_home_points > self.instance.user_visitor_points:
-            self.instance.winner = self.instance.user_home
-        elif self.instance.user_home_points < self.instance.user_visitor_points:
-            self.instance.winner = self.instance.user_visitor
+        user_home_points = self.instance.user_home_points
+        user_visitor_points = self.instance.user_visitor_points
+        if user_home_points > user_visitor_points:
+            self.instance.winner = user_home
+        elif user_home_points < user_visitor_points:
+            self.instance.winner = user_visitor
         else:
             raise forms.ValidationError(
                 "The winner can't be determined when there is a draw!"
@@ -132,5 +136,6 @@ class MatchCompleteForm(forms.ModelForm):
         instance = super().save()
 
         parent_seeding(match=instance)
-        if not instance.parent.users_both_sides:
+        # eru ekki tveir userar => frítt win
+        if instance.parent and not instance.parent.users_both_sides:
             free_match_win(instance.parent)

@@ -30,9 +30,9 @@ def parent_seeding(match):
     parent = match.parent
     if not parent:
         return
-    # efri matchinn með hærra
-    higher_id = max(list(parent.children.all().values_list("id", flat=True)))
-    if match.id == higher_id:
+    # efri matchinn með lægra
+    lower_id = min(list(parent.children.all().values_list("id", flat=True)))
+    if match.id == lower_id:
         parent.user_home = match.winner
     else:
         parent.user_visitor = match.winner
