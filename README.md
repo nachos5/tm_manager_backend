@@ -166,5 +166,4 @@ The server launches at **127.0.0.1:8000**
   
   * mutations.py - hér eru mutations, þau búa til eða update-a gögn, mér finnst þægilegast að nota DjangoModelFormMutation.
 
-
-https://docs.graphene-python.org/projects/django/en/latest/introspection/
+schema.json => python manage.py graphql_schema

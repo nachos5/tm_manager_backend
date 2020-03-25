@@ -4,7 +4,7 @@ import graphql_jwt
 from graphql_jwt.decorators import login_required
 
 from . import types
-from .mutations import UserCreateMutation
+from .mutations import TokenCreateMutation, UserCreateMutation
 from .resolvers import resolve_me, resolve_user, resolve_users
 from ..core.fields import PrefetchingConnectionField
 
@@ -31,9 +31,8 @@ class UsersQueries(graphene.ObjectType):
 
 class UsersMutations(graphene.ObjectType):
     # jwt
-    token_create = graphql_jwt.ObtainJSONWebToken.Field()
+    token_create = TokenCreateMutation.Field()
     token_refresh = graphql_jwt.Verify.Field()
     token_verify = graphql_jwt.Refresh.Field()
 
     user_create = UserCreateMutation.Field()
-

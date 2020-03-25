@@ -7,6 +7,7 @@ from ...users import models
 
 
 class User(CountableDjangoObjectType):
+    id_int = graphene.Int()
     matches_won_count = graphene.Int()
     tournaments_won_count = graphene.Int()
 
@@ -14,6 +15,9 @@ class User(CountableDjangoObjectType):
         interfaces = [graphene.relay.Node]
         model = models.User
         exclude = ("password", "isSuperuser", "isStaff", "isActive")
+
+    def resolve_id_int(self, info):
+        return info.context.user.id
 
     def resolve_tournaments(self, info):
         user = info.context.user
@@ -44,4 +48,3 @@ class User(CountableDjangoObjectType):
         if user.is_authenticated:
             return Tournament.objects.filter(winner=user).count()
         return 0
-
