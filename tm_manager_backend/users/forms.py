@@ -1,3 +1,5 @@
+from django import forms as django_forms
+
 from django.contrib.auth import get_user_model, forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
@@ -18,6 +20,19 @@ class UserCreationForm(forms.UserCreationForm):
 
     class Meta(forms.UserCreationForm.Meta):
         model = User
+        fields = ("username", "email", "name")
+
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        if not email:
+            raise ValidationError("This field is required")
+        return email
+
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        if not name:
+            raise ValidationError("This field is required")
+        return name
 
     def clean_username(self):
         username = self.cleaned_data["username"]

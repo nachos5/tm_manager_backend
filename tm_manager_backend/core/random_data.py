@@ -63,7 +63,13 @@ def create_test_user():
     fake = Faker()
     test_pw = "epli1234"
     form = UserCreationForm(
-        {"username": fake.user_name(), "password1": test_pw, "password2": test_pw}
+        {
+            "username": fake.user_name(),
+            "password1": test_pw,
+            "password2": test_pw,
+            "email": fake.email(),
+            "name": fake.name(),
+        }
     )
     if form.is_valid():
         form.save()

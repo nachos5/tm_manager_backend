@@ -165,3 +165,6 @@ The server launches at **127.0.0.1:8000**
     Þá fær maður öll tournaments sem innihalda a í nafninu, i-ið í icontains þýðir ignore case.
   
   * mutations.py - hér eru mutations, þau búa til eða update-a gögn, mér finnst þægilegast að nota DjangoModelFormMutation.
+
+
+https://docs.graphene-python.org/projects/django/en/latest/introspection/
