@@ -28,6 +28,7 @@ class TournamentType(CountableDjangoObjectType):
     user_is_registered = graphene.Boolean()
     can_edit = graphene.Boolean()
     winner = graphene.Field(User)
+    n_rounds = graphene.Int()
 
     class Meta:
         interfaces = [graphene.relay.Node]
@@ -60,6 +61,9 @@ class TournamentType(CountableDjangoObjectType):
         return user.is_authenticated and (
             user.is_superuser or user == self.creator or user in self.admins.all()
         )
+
+    def resolve_n_rounds(self, info):
+        return self.n_rounds
 
     def resolve_winner(self, info):
         return self.winner
