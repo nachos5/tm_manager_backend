@@ -283,7 +283,7 @@ SOCIALACCOUNT_ADAPTER = "tm_manager_backend.users.adapters.SocialAccountAdapter"
 
 
 # Your stuff...
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 GRAPHENE = {
     "SCHEMA": "tm_manager_backend.graphql_api.api.schema",
