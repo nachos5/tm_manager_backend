@@ -7,7 +7,6 @@ from django.views.generic import TemplateView
 from django.views import defaults as default_views
 
 from graphene_django.views import GraphQLView
-from tm_manager_backend.graphql.api import schema
 
 urlpatterns = [
     path("", csrf_exempt(GraphQLView.as_view(graphiql=True)), name="api"),

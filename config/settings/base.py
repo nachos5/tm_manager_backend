@@ -286,7 +286,7 @@ SOCIALACCOUNT_ADAPTER = "tm_manager_backend.users.adapters.SocialAccountAdapter"
 # ------------------------------------------------------------------------------
 
 GRAPHENE = {
-    "SCHEMA": "tm_manager_backend.graphql.api.schema",
+    "SCHEMA": "tm_manager_backend.graphql_api.api.schema",
     "MIDDLEWARE": ["graphql_jwt.middleware.JSONWebTokenMiddleware"],
 }
 
