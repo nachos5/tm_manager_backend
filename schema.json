@@ -2339,6 +2339,18 @@
                 "name": "Boolean",
                 "ofType": null
               }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "nRounds",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             }
           ],
           "inputFields": null,
@@ -3518,13 +3530,9 @@
                   "description": null,
                   "name": "token",
                   "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
-                      "ofType": null
-                    }
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
                   }
                 }
               ],
@@ -3545,13 +3553,9 @@
                   "description": null,
                   "name": "token",
                   "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
-                      "ofType": null
-                    }
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
                   }
                 }
               ],
@@ -3743,11 +3747,31 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "token",
+              "name": "payload",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "GenericScalar",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "refreshExpiresIn",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
               }
             },
             {
@@ -3761,35 +3785,28 @@
                 "name": "User",
                 "ofType": null
               }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "TokenCreateMutation",
-          "possibleTypes": null
-        },
-        {
-          "description": null,
-          "enumValues": null,
-          "fields": [
+            },
             {
               "args": [],
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "payload",
+              "name": "token",
               "type": {
-                "kind": "SCALAR",
-                "name": "GenericScalar",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             }
           ],
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "Verify",
+          "name": "TokenCreateMutation",
           "possibleTypes": null
         },
         {
@@ -3811,13 +3828,28 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "token",
+              "name": "payload",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "GenericScalar",
+                  "ofType": null
+                }
               }
-            },
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "Verify",
+          "possibleTypes": null
+        },
+        {
+          "description": null,
+          "enumValues": null,
+          "fields": [
             {
               "args": [],
               "deprecationReason": null,
@@ -3825,9 +3857,45 @@
               "isDeprecated": false,
               "name": "payload",
               "type": {
-                "kind": "SCALAR",
-                "name": "GenericScalar",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "GenericScalar",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "refreshExpiresIn",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "token",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             }
           ],
