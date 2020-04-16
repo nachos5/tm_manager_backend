@@ -18,6 +18,8 @@ class UserCreationForm(forms.UserCreationForm):
         {"duplicate_username": _("This username has already been taken.")}
     )
 
+    set_as_superuser = django_forms.BooleanField(required=False)
+
     class Meta(forms.UserCreationForm.Meta):
         model = User
         fields = ("username", "email", "name")
@@ -43,3 +45,15 @@ class UserCreationForm(forms.UserCreationForm):
             return username
 
         raise ValidationError(self.error_messages["duplicate_username"])
+
+    def save(self, *args, **kwargs):
+        c = self.cleaned_data
+        if "set_as_superuser" in c:
+            s = c.pop("set_as_superuser")
+        instance = super().save(*args, **kwargs)
+        print(instance)
+        if s:
+            instance.is_superuser = True
+            instance = instance.save()
+        print(instance)
+        return instance

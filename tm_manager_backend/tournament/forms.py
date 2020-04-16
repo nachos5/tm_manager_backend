@@ -50,6 +50,10 @@ class TournamentToggleRegisteredUserForm(forms.ModelForm):
         # tournamentið verður að vera opið
         if not instance.status == TournamentStatus.OPEN:
             raise forms.ValidationError("This tournament is not open for registration.")
+        if instance.registered_users.count() >= instance.slots:
+            raise forms.ValidationError(
+                "Unfortunately there are no open slots in this tournament."
+            )
         # togglum
         if user in instance.registered_users.all():
             instance.registered_users.remove(user)
